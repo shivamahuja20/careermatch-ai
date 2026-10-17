@@ -1,0 +1,6 @@
+{
+  "name": "CareerMatch AI",
+  "description": "Comprehensive career intelligence platform: CV & JD matching, ATS optimization, grounded company research, custom STAR story bank, interview prep, and 7-day action plans.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

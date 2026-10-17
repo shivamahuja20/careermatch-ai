@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function () {
+        try {
+          var originalFetch = window.fetch ? window.fetch.bind(window) : null;
+          var customFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function () {
+              return customFetch;
+            },
+            set: function (newFetch) {
+              customFetch = newFetch;
+            },
+            configurable: true,
+            enumerable: true,
+          });
+
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            try {
+              Object.defineProperty(Window.prototype, 'fetch', {
+                get: function () {
+                  return customFetch;
+                },
+                set: function (newFetch) {
+                  customFetch = newFetch;
+                },
+                configurable: true,
+                enumerable: true,
+              });
+            } catch (e2) {}
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap"
+    />
+    <meta name="theme-color" content="#f3f2fb" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareerMatch AI - Job Fit & Interview Readiness Platform</title>
+    <meta name="description" content="Comprehensive career intelligence platform: CV & JD matching, ATS optimization, grounded company research, custom STAR story bank, interview prep, and 7-day action plans." />
+    <meta property="og:title" content="CareerMatch AI - Job Fit & Interview Readiness Platform" />
+    <meta property="og:description" content="Comprehensive career intelligence platform: CV & JD matching, ATS optimization, grounded company research, custom STAR story bank, interview prep, and 7-day action plans." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
