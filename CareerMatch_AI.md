@@ -102,7 +102,7 @@ The first version was generated in Google AI Studio from the assignment brief. I
 
 The app was tested without a Gemini key, using a fake Gemini service that misbehaves on purpose. It returns missing scores, a fact with no source and a made-up source number.
 
-- **51 unit tests** cover contact-detail removal, reading PDF, DOC and DOCX files, rejecting broken files, refusing missing scores, the readiness formula, reading article dates, citation checks and recognising a free-tier key.
+- **53 unit tests** cover contact-detail removal, reading PDF, DOC and DOCX files, rejecting broken files, refusing missing scores, the readiness formula, reading article dates, citation checks and recognising a free-tier key.
 - **A 25-check browser test** covers uploading a .doc CV, rejecting a fake PDF, loading a partial report when one step fails, retrying that step, and confirming that removed facts never appear.
 - The fake Gemini confirmed that the candidate's name and phone number never reach the AI.
 - The layout was checked on desktop and at phone widths of 360, 375 and 414 pixels.

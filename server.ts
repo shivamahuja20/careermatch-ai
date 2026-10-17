@@ -28,7 +28,9 @@ import {
   validIds,
   formatDate,
   isGroundingUnavailable,
+  isSearchQuotaError,
   FREE_TIER_RESEARCH_MESSAGE,
+  SEARCH_QUOTA_MESSAGE,
 } from './src/server/sources';
 import { runCvIntegrityCheck } from './src/utils/integrityCheck';
 
@@ -42,9 +44,15 @@ const PORT = Number(process.env.PORT) || 3000;
 const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 // Rate limiting (C5)
+// AI Studio and Cloud Run sit behind Google's proxy. Trusting the first proxy hop lets the
+// rate limiter see each visitor's own address, so visitors do not share one limit.
+app.set('trust proxy', 1);
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 120, // generous allowance for staged pipeline steps
+  // The standard 'Forwarded' header is not used by Google's proxy for client addresses.
+  validate: { forwardedHeader: false },
   message: { error: 'Rate limit exceeded. Please wait before submitting more analyses.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -112,6 +120,7 @@ function friendlyError(error: any, fallback: string): string {
   if (isGroundingUnavailable(error)) return FREE_TIER_RESEARCH_MESSAGE;
   if (/api key not valid|API_KEY_INVALID|missing.*key|401/i.test(msg)) return `${fallback} The Gemini API key is missing or invalid.`;
   if (/permission|403/i.test(msg)) return `${fallback} The Gemini API key does not have permission for this request.`;
+  if (/503|UNAVAILABLE|high demand|overloaded/i.test(msg)) return `${fallback} Gemini is busy right now. Please retry in a moment.`;
   if (/429|quota|rate/i.test(msg)) return `${fallback} The Gemini usage limit was reached. Please wait a minute.`;
   return fallback;
 }
@@ -626,6 +635,11 @@ Write plain factual sentences. Say so when you could not find something rather t
       if (isGroundingUnavailable(searchErr)) {
         // 403, not 5xx, so the browser does not retry automatically. Retrying cannot help until billing is on.
         return res.status(403).json({ error: FREE_TIER_RESEARCH_MESSAGE, code: 'GROUNDING_NOT_AVAILABLE' });
+      }
+      if (isSearchQuotaError(searchErr)) {
+        // 429, so the browser does not retry straight away. The user can retry after enabling billing or waiting.
+        console.error('Research: search request refused with a quota error:', searchErr?.status);
+        return res.status(429).json({ error: SEARCH_QUOTA_MESSAGE, code: 'SEARCH_QUOTA' });
       }
       throw searchErr;
     }
