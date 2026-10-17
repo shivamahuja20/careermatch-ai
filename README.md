@@ -75,7 +75,7 @@ The theme lives in `src/index.css`. It remaps the Tailwind colours, so every sec
 
 The tests use fictional data and need no Gemini key or internet connection.
 
-- `npm test` runs 43 unit tests. They cover phone and contact redaction, reading PDF, DOC and DOCX files, rejecting broken files, refusing missing scores, the readiness formula, reading article dates and titles, citation markers, and dropping made-up source numbers.
+- `npm test` runs 51 unit tests. They cover phone and contact redaction, reading PDF, DOC and DOCX files, rejecting broken files, refusing missing scores, the readiness formula, reading article dates and titles, citation markers, dropping made-up source numbers, and recognising a free-tier key.
 - `tests/mock-gemini.mjs` is a fake Gemini API that misbehaves on purpose. It returns missing scores, a fact with no source and a made-up source number.
 - `npm run test:e2e` runs a browser test of the whole flow against the fake Gemini. It covers uploading a .doc CV, rejecting a fake PDF, loading a partial report when the fit step fails, retrying that step, checking that removed facts never appear, and checking the readiness score. The steps to start it are at the top of `tests/e2e.cjs`.
 
