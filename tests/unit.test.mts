@@ -17,6 +17,7 @@ import {
   resolveSource,
   NOT_SHOWN,
   isGroundingUnavailable,
+  isSearchQuotaError,
 } from '../src/server/sources';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -201,6 +202,15 @@ for (const m of [
 for (const m of ['API key not valid. Please pass a valid API key.', 'Internal error', 'Request timed out after 120 seconds.', '429 Resource exhausted']) {
   await test(`not mistaken for a free-tier refusal: "${m.slice(0, 40)}"`, () => assert.equal(isGroundingUnavailable({ message: m }), false));
 }
+
+await test('free-tier search quota error recognised (real wording from AI Studio)', () => {
+  const real = { status: 429, message: '{"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details.","status":"RESOURCE_EXHAUSTED"}}' };
+  assert.equal(isSearchQuotaError(real), true);
+});
+await test('other errors are not treated as search quota errors', () => {
+  assert.equal(isSearchQuotaError({ status: 503, message: 'This model is currently experiencing high demand.' }), false);
+  assert.equal(isSearchQuotaError({ status: 400, message: 'API key not valid.' }), false);
+});
 
 console.log(`\n${passed} passed, ${failures.length} failed`);
 if (failures.length) process.exit(1);

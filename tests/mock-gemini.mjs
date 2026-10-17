@@ -148,6 +148,11 @@ const server = http.createServer((req, res) => {
       res.writeHead(400, { 'content-type': 'application/json' });
       return res.end(JSON.stringify({ error: { code: 400, message: 'Grounding with Google Search is not available on the free tier.', status: 'FAILED_PRECONDITION' } }));
     }
+    // MOCK_SEARCH_429=1 copies what a real free-tier key returned in AI Studio for the search step.
+    if (process.env.MOCK_SEARCH_429 === '1' && hasSearchTool) {
+      res.writeHead(429, { 'content-type': 'application/json' });
+      return res.end(JSON.stringify({ error: { code: 429, message: 'You exceeded your current quota, please check your plan and billing details.', status: 'RESOURCE_EXHAUSTED' } }));
+    }
     const r = replyFor(prompt, hasSearchTool);
     const text = r.json ? JSON.stringify(r.json) : r.text;
     const candidate = { content: { role: 'model', parts: [{ text }] }, finishReason: 'STOP', index: 0 };
