@@ -7,7 +7,7 @@
 | Student | Shivam Ahuja, PGPM, SPJIMR Mumbai |
 | Course | [ADD: course name] |
 | Live app | [ADD: link from AI Studio "Publish"] |
-| Source code | [ADD: GitHub repository link] |
+| Source code | https://github.com/shivamahuja20/careermatch-ai |
 | AI model | Google Gemini 3.8 Flash, with Google Search grounding for research |
 | Date | [ADD: submission date] |
 
