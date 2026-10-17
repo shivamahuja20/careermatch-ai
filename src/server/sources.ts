@@ -235,6 +235,22 @@ export const FREE_TIER_RESEARCH_MESSAGE =
   'Live company and industry research needs a paid Gemini API key. Google Search grounding is not available on the free tier. ' +
   'Every other section works on a free key. To turn research on, enable billing for this key in Google AI Studio, then click "Retry this step".';
 
+export const SEARCH_QUOTA_MESSAGE =
+  'Live company and industry research could not run because Google refused the search request with a quota error. ' +
+  'This almost always means the Gemini API key is on the free tier, where Google Search grounding is not included. ' +
+  'Every other section works on a free key. To turn research on, enable billing for this key in Google AI Studio, then click "Retry this step". ' +
+  'If billing is already on, wait a minute and retry.';
+
+/**
+ * True when the search call failed with a quota error (429 / RESOURCE_EXHAUSTED). On a free-tier key
+ * Google reports the missing search allowance this way, using the same wording as an ordinary rate limit,
+ * so the message shown to the user covers both cases.
+ */
+export function isSearchQuotaError(error: any): boolean {
+  const msg = `${error?.message || ''} ${error?.status || ''} ${JSON.stringify(error?.error || '')}`;
+  return Number(error?.status) === 429 || /RESOURCE_EXHAUSTED|exceeded your current quota|"code":\s*429/i.test(msg);
+}
+
 /**
  * True when Gemini refused the Google Search tool, which is what happens on a free-tier key
  * (or a key whose project has no billing). Gemini reports this as a 400, 403 or 429 error that
