@@ -33,7 +33,7 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
       }
       if (isTimeout) throw new Error('The request timed out after 120 seconds. Please try again.');
       const message = err.message || 'An unexpected network error occurred.';
-      throw new Error(message.replace(/https?:\/\/[^\s]+/g, '[service]').slice(0, 400));
+      throw new Error(message.replace(/https?:\/\/[^\s]+/g, '[service]').slice(0, 800));
     } finally {
       clearTimeout(timeoutId);
     }
